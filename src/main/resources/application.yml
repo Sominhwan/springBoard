@@ -1,0 +1,16 @@
+server:
+  port: 8085
+
+spring:
+  # Database
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/board
+    username: postgres
+    password: 1234
+    
+mybatis:
+  mapper-locations: classpath:mappers/db1/*/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+
