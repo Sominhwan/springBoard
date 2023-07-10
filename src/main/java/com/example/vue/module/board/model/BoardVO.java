@@ -1,12 +1,16 @@
 package com.example.vue.module.board.model;
 
+import java.util.Date;
+
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class BoardVO {
@@ -14,6 +18,6 @@ public class BoardVO {
 	private String title;
 	private int cnt;
 	private String writer;
-	private String insert_date;
-	private String update_date;	
+	private Date insert_date;
+	private Date update_date;		
 }

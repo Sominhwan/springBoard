@@ -1,12 +1,8 @@
 package com.example.vue.module.board.service;
 
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.example.vue.module.board.dao.db1.BoardDAO;
 import com.example.vue.module.board.model.BoardVO;
@@ -21,9 +17,22 @@ public class BoardService {
     public List<BoardVO> boardSearch(){
         return boardDAO.getSearch(); 
     }
-    public String boardSearch2(){
-    	System.out.println("안녕");
-;
-    	return "sksmsa"; 
+    
+    public List<BoardVO> boardList(){
+    	String page = null;
+		if(page==null)
+			page="1";
+		int curpage=Integer.parseInt(page);
+		
+		int rowSize=10;
+		int start=(rowSize*curpage)-(rowSize-1);
+		int end=rowSize*curpage;   
+		
+		List<BoardVO> list = boardDAO.boardListData(start, end);
+		//int totaloage = boardDAO.boardTotalPage();
+		
+		
+		return list;
+
     }
 }

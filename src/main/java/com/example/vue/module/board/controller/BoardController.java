@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.vue.module.board.model.BoardVO;
 import com.example.vue.module.board.service.BoardService;
 
 import lombok.RequiredArgsConstructor;
@@ -18,21 +19,13 @@ public class BoardController {
 	private final BoardService boardService;
 	
 	@GetMapping("/page")
-	public List<?> index() {
+	public List<BoardVO> index() {
 		return boardService.boardSearch();
 	}
-	@GetMapping("/test3")
-	public String index3() {
-		return boardService.boardSearch2();
-	}
-//	@PostMapping("/test")
-//	public String index() {
-//		return "zz";
-//	}
 
-	@GetMapping("/test2")
-	public String index2() {
-		return "그래서";
+	@GetMapping("/boardlist")
+	public List<BoardVO> boardList(){
+		return boardService.boardList();	
 	}
 }
 
