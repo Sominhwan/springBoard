@@ -3,6 +3,7 @@ package com.example.vue.module.board.controller;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,9 +24,9 @@ public class BoardController {
 		return boardService.boardSearch();
 	}
 
-	@GetMapping("/boardlist")
-	public List<BoardVO> boardList(){
-		return boardService.boardList();	
+	@GetMapping("/all")
+	public String boardList(@RequestParam("page") String page){
+		return boardService.boardList(page);	
 	}
 }
 
