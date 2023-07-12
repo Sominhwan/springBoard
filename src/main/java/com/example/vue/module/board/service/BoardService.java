@@ -4,9 +4,13 @@ import java.util.List;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.example.vue.module.board.dao.db1.BoardDAO;
+import com.example.vue.module.board.dto.ResDTO;
 import com.example.vue.module.board.model.BoardVO;
 
 import lombok.RequiredArgsConstructor;
@@ -19,7 +23,7 @@ public class BoardService {
     public List<BoardVO> boardSearch(){
         return boardDAO.getSearch(); 
     }
-    // 페이징 처리
+    // 게시글 목록 불러오기(페이징 처리)
     public String boardList(String page){
 		if(page==null)
 			page="1";
@@ -34,6 +38,7 @@ public class BoardService {
 		String result = "";
 		JSONArray arr=new JSONArray();
 		int k=0;
+		
 		for(BoardVO vo : boardlist)
 		{
 			JSONObject obj=new JSONObject();
@@ -53,5 +58,23 @@ public class BoardService {
 		result = arr.toJSONString();
 
 		return result;
+    }
+    
+    // 게시글 작성
+    public HttpEntity<?> boardInsert(BoardVO vo){
+    	boardDAO.boardInsert(vo);
+    	return new ResponseEntity<>(
+    				ResDTO.builder()
+    							.code(0)
+    							.message("게시물이 올라갔습니다.")
+    							.build(),
+    				HttpStatus.OK);  	   	
+    }
+    
+    // 게시물 상세정보 불러오기
+    public List<BoardVO> boardRead(String id){
+    	int boardId=Integer.parseInt(id);
+    	boardDAO.boardViewsCount(boardId);
+    	return boardDAO.boardDetailData(boardId);
     }
 }

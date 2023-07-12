@@ -2,8 +2,10 @@ package com.example.vue.module.board.controller;
 
 import java.util.List;
 
+import org.springframework.http.HttpEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,5 +30,15 @@ public class BoardController {
 	public String boardList(@RequestParam("page") String page){
 		return boardService.boardList(page);	
 	}
+	
+	@PostMapping("/write")
+	public HttpEntity<?> boardWrite(@RequestBody BoardVO vo){
+		return boardService.boardInsert(vo);
+	}	
+	
+	@GetMapping("/read")
+	public List<BoardVO> boardRead(@RequestParam("id") String id){
+		return boardService.boardRead(id);
+	}		
 }
 
