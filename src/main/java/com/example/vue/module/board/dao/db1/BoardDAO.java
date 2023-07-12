@@ -14,5 +14,7 @@ public interface BoardDAO {
 	List<BoardVO> getSearch();
 	List<BoardVO> boardListData(@Param("start") int start, @Param("end") int end);
 	int boardTotalPage();
-
+	Integer boardInsert(BoardVO boardVO);
+	void boardViewsCount(@Param("id") int id);
+	List<BoardVO> boardDetailData(@Param("id") int id);
 }

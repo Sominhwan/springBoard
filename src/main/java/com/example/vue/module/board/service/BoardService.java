@@ -4,9 +4,13 @@ import java.util.List;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.example.vue.module.board.dao.db1.BoardDAO;
+import com.example.vue.module.board.dto.ResDTO;
 import com.example.vue.module.board.model.BoardVO;
 
 import lombok.RequiredArgsConstructor;
@@ -34,8 +38,10 @@ public class BoardService {
 		String result = "";
 		JSONArray arr=new JSONArray();
 		int k=0;
+		
 		for(BoardVO vo : boardlist)
 		{
+			System.out.println(vo.getInsert_date());
 			JSONObject obj=new JSONObject();
 			obj.put("id", vo.getId());
 			obj.put("title", vo.getTitle());
@@ -53,5 +59,23 @@ public class BoardService {
 		result = arr.toJSONString();
 
 		return result;
+    }
+    
+    // 글 작성
+    public HttpEntity<?> boardInsert(BoardVO vo){
+    	boardDAO.boardInsert(vo);
+    	return new ResponseEntity<>(
+    				ResDTO.builder()
+    							.code(0)
+    							.message("게시물이 올라갔습니다.")
+    							.build(),
+    				HttpStatus.OK);  	   	
+    }
+    
+    // 해당 게시물 상세보기 정보 가져오기 및 조회수 증가
+    public List<BoardVO> boardRead(String id){
+    	int boardId=Integer.parseInt(id);
+    	boardDAO.boardViewsCount(boardId);
+    	return boardDAO.boardDetailData(boardId);
     }
 }
