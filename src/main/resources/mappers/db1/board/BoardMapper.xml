@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.vue.module.board.dao.db1.BoardDAO">
-    <select id="getSearch" resultType="com.example.vue.module.board.model.BoardVO"> 
-        SELECT id, title, contents, cnt, writer, insert_date, update_date
-        FROM tb_board
-    </select>
     <select id="boardListData" resultType="com.example.vue.module.board.model.BoardVO"> 
-    	SELECT id, title, cnt, writer, TO_CHAR(insert_date,'YYYY-MM-DD HH24:MI') as insert_date
-		FROM tb_board 
-		WHERE id BETWEEN #{start} AND #{end} ORDER BY id DESC
+		SELECT id, title, cnt, writer, TO_CHAR(insert_date,'YYYY-MM-DD HH24:MI') as insert_date
+		FROM tb_board
+		ORDER BY id DESC
+		OFFSET #{offset} ROWS
+		FETCH NEXT #{rowSize} ROWS ONLY;
     </select>
     <select id="boardTotalPage" resultType="int">
       	SELECT CEIL(COUNT(*)/10.0) 
@@ -42,4 +40,55 @@
 		FROM tb_board 
 		WHERE id = #{id}
 	</select>
+	<select id="boardGetPwd" resultType="string">
+		SELECT pwd
+		FROM tb_board 
+		WHERE id = #{id}
+	</select>
+	<delete id="boardDelete">
+		DELETE 
+		FROM tb_board 
+		WHERE id = #{id}
+	</delete>
+	<!-- 게시물 수정 데이터 가져오기 -->
+    <select id="boardUpdateData" resultType="com.example.vue.module.board.model.BoardVO"> 
+    	SELECT id, writer, title, contents, pwd
+		FROM tb_board 
+		WHERE id = #{id}
+    </select>	
+    <!-- 게시물 수정하기 -->
+    <update id="boardUpdate" parameterType="com.example.vue.module.board.model.BoardVO">
+	    UPDATE tb_board 
+	    SET writer = #{writer}, title = #{title}, contents = #{contents}, update_date = NOW(), pwd = #{pwd}
+	    WHERE id = #{id}    	
+    </update>
+    <!-- 댓글 가져오기 -->
+    <select id="commentListData" resultType="com.example.vue.module.board.model.CommentVO"> 
+		SELECT writer, comment, ip, TO_CHAR(insert_date,'YYYY.MM.DD HH24:MI') as insert_date
+		FROM tb_comment 
+		WHERE id = #{id} ORDER BY cid desc
+    </select>
+    <!-- 댓글 작성하기 -->
+	<insert id="commentInsert" parameterType="com.example.vue.module.board.dao.db1.BoardDAO">
+		INSERT INTO tb_comment(
+			id,
+			writer,
+			comment,
+			ip,
+			insert_date
+		)
+		VALUES(
+			#{id},
+			#{writer},
+			#{comment},
+			#{ip},
+			NOW()
+		)
+	</insert>  
+	<!-- 게시물 최신글 5개 가져오기 -->  
+    <select id="boardMainListData" resultType="com.example.vue.module.board.model.BoardVO"> 
+		SELECT id, title, TO_CHAR(insert_date,'YYYY-MM-DD') as insert_date 
+		FROM tb_board ORDER BY id DESC
+		limit #{data}
+    </select>    
 </mapper>

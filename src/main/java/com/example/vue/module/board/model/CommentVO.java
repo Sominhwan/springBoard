@@ -11,13 +11,11 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 @NoArgsConstructor
-public class BoardVO {
+public class CommentVO {
+	private int cid;
 	private int id;
-	private String title;
-	private int cnt;
-	private String contents;
 	private String writer;
+	private String comment;
+	private String ip;
 	private String insert_date;
-	private String update_date;	
-	private String pwd;	
 }

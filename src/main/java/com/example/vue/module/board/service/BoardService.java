@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.example.vue.module.board.dao.db1.BoardDAO;
+import com.example.vue.module.board.dto.BoardDTO;
+import com.example.vue.module.board.dto.CommentDTO;
 import com.example.vue.module.board.dto.ResDTO;
 import com.example.vue.module.board.model.BoardVO;
 
@@ -20,19 +22,16 @@ import lombok.RequiredArgsConstructor;
 //@Transactional(readOnly = false) // readOnly = true 경우 db 접근시 select 만 가능
 public class BoardService {
 	private final BoardDAO boardDAO;
-    public List<BoardVO> boardSearch(){
-        return boardDAO.getSearch(); 
-    }
+
     // 게시글 목록 불러오기(페이징 처리)
     public String boardList(String page){
 		if(page==null)
 			page="1";
 		int curPage=Integer.parseInt(page);
 		int rowSize=10;
-		int startPage=(rowSize*curPage)-(rowSize-1);
-		int endPage=rowSize*curPage;
+		int offset = (curPage-1) * rowSize;
 		
-		List<BoardVO> boardlist = boardDAO.boardListData(startPage, endPage);
+		List<BoardVO> boardlist = boardDAO.boardListData(offset, rowSize);
 		int totalPage = boardDAO.boardTotalPage();
 		
 		String result = "";
@@ -61,7 +60,7 @@ public class BoardService {
     }
     
     // 게시글 작성
-    public HttpEntity<?> boardInsert(BoardVO vo){
+    public HttpEntity<?> boardWrtie(BoardVO vo){
     	boardDAO.boardInsert(vo);
     	return new ResponseEntity<>(
     				ResDTO.builder()
@@ -76,5 +75,101 @@ public class BoardService {
     	int boardId=Integer.parseInt(id);
     	boardDAO.boardViewsCount(boardId);
     	return boardDAO.boardDetailData(boardId);
+    }
+    
+    // 게시글 삭제
+    public HttpEntity<?> boarDelete(int id, String pwd){
+    	String boardPwd = boardDAO.boardGetPwd(id);
+    	if(boardPwd.equals(pwd)) {
+        	boardDAO.boardDelete(id);
+        	return new ResponseEntity<>(
+        			ResDTO.builder()
+    							.code(0)
+    							.message("게시물이 삭제되었습니다.")
+    							.build(),
+    				HttpStatus.OK);  
+    	} else {
+        	return new ResponseEntity<>(
+    				ResDTO.builder()
+    							.code(-1)
+    							.message("비밀번호가 틀렸습니다.")
+    							.build(),
+    				HttpStatus.BAD_REQUEST);      		
+    	}  	
+    }
+    
+    // 게시글 수정 비밀번호 확인
+    public HttpEntity<?> boardPassword(int id, String pwd){
+    	String boardPwd = boardDAO.boardGetPwd(id);
+    	if(boardPwd.equals(pwd)) {
+        	return new ResponseEntity<>(
+        			ResDTO.builder()
+    							.code(0)
+    							.message("올바른 비밀번호입니다.")
+    							.build(),
+    				HttpStatus.OK);  
+    	} else {
+        	return new ResponseEntity<>(
+    				ResDTO.builder()
+    							.code(-1)
+    							.message("비밀번호가 틀렸습니다.")
+    							.build(),
+    				HttpStatus.BAD_REQUEST);      		
+    	}  	
+    }
+    
+    // 게시글 수정 데이터 가져오기
+    public HttpEntity<?> boardData(String id){
+    	return new ResponseEntity<>(
+    				ResDTO.builder()
+    							.code(0)
+    							.message("수정 게시물 데이터를 불러왔습니다.")
+    							.data(boardDAO.boardUpdateData(Integer.parseInt(id)))
+    							.build(),
+    				HttpStatus.OK);  	   	
+    }    
+    
+    // 게시글 수정하기
+    public HttpEntity<?> boardUpdate(BoardDTO.ReqBoard reqDTO){
+    	boardDAO.boardUpdate(reqDTO.boardUpdate());
+    	return new ResponseEntity<>(		
+    				ResDTO.builder()
+    							.code(0)
+    							.message("게시물을 수정하였습니다.")
+    							.build(),
+    				HttpStatus.OK);  	   	
+    }  
+    
+    // 게시물 댓글 작성
+    public HttpEntity<?> commentList(String id){
+    	return new ResponseEntity<>(
+    				ResDTO.builder()
+    							.code(0)
+    							.message("댓글이 올라갔습니다.")
+    							.data(boardDAO.commentListData(Integer.parseInt(id)))
+    							.build(),
+    				HttpStatus.OK);  	   	
+    }     
+    
+    // 게시물 댓글 작성
+    public HttpEntity<?> commentWrite(CommentDTO.ReqComment reqDTO){
+    	boardDAO.commentInsert(reqDTO.commentWrite());
+    	return new ResponseEntity<>(
+    				ResDTO.builder()
+    							.code(0)
+    							.message("댓글이 올라갔습니다.")
+    							.build(),
+    				HttpStatus.OK);  	   	
+    }   
+    
+    // 최신 게시물 5개 가져오기
+    public HttpEntity<?> boardMainList(int data){	
+    	return new ResponseEntity<>(
+    				ResDTO.builder()
+    							.code(0)
+    							.message("게시물을 불러왔습니다.")
+    							.data(boardDAO.boardMainListData(data))
+    							.build(),
+    				HttpStatus.OK);  	   	
     }
 }
