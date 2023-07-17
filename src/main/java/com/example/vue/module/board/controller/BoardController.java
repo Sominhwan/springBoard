@@ -24,27 +24,27 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/v1/board")
 public class BoardController {
 	private final BoardService boardService;
-	
+	// 게시판 데이터 불러오기
 	@GetMapping("/all")
 	public String boardList(@RequestParam("page") String page){
 		return boardService.boardList(page);	
 	}	
-	
+	// 게시판 쓰기
 	@PostMapping("/write")
 	public HttpEntity<?> boardWrite(@RequestBody BoardVO vo){
 		return boardService.boardWrtie(vo);
 	}	
-	
+	// 게시판 특정 데이터 불러오기
 	@GetMapping("/read")
 	public List<BoardVO> boardRead(@RequestParam("id") String id){
 		return boardService.boardRead(id);
 	}	
-	
+	// 게시판 삭제
 	@DeleteMapping("/delete")
 	public HttpEntity<?> boardDelete(@RequestBody BoardDTO.ReqBoard reqDTO) {
 		return boardService.boarDelete(reqDTO.getId(), reqDTO.getPwd());
 	}
-	
+	// 게시판 등록 비밀번호 
 	@PostMapping("/password")
 	public HttpEntity<?> boardPassword(@RequestBody BoardDTO.ReqBoard reqDTO) {
 		return boardService.boardPassword(reqDTO.getId(), reqDTO.getPwd());
